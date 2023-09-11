@@ -10,8 +10,8 @@ EL_HOME_ODOO="${EL_HOME_ERPLIBRE}/odoo"
 # Set to true if you want to install it, false if you don't need it or have it already installed.
 EL_INSTALL_WKHTMLTOPDF="True"
 # Set the default Odoo port
-EL_PORT="8069"
-EL_LONGPOLLING_PORT="8072"
+EL_PORT="8073"
+EL_LONGPOLLING_PORT="8076"
 # set the superadmin password
 EL_SUPERADMIN="admin"
 EL_CONFIG="${EL_USER}"

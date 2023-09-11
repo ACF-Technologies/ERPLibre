@@ -136,6 +136,87 @@ config_gen_ripbylop:
 	./script/git/git_repo_update_group.py --group base,ripbylop
 	./script/generate_config.sh
 
+##########################
+# BandManager configuration #
+##########################
+.PHONY: image_db_create_BandManager_libre
+image_db_create_BandManager_libre:
+	./script/database/db_restore.py --database image_creation_BandManager_libre --image erplibre_base
+	#./script/addons/install_addons.sh image_creation_BandManager_libre helpdesk_mgmt,helpdesk_mgmt_project,helpdesk_mgmt_timesheet,board,mail_activity_board,l10n_ca,project_category,project_stage_mgmt,mail_cc_show_follower,helpdesk_merge,email_cc,muk_web_theme,mail_message_reminder
+	./script/addons/install_addons.sh image_creation_BandManager_libre l10n_ca,website_event_sale,event_registration_qr_code
+	./.venv/bin/python3 ./odoo/odoo-bin db --backup --database image_creation_BandManager_libre --restore_image BandManager_libre_base
+
+.PHONY: image_db_create_BandManager
+image_db_create_BandManager:
+	./script/database/db_restore.py --database image_creation_BandManager --image BandManager_libre_base
+	#./script/addons/install_addons.sh image_creation_BandManager helpdesk_mgmt_approbation_purchase,BandManager_grant_fund_manage_odoo,project_benefice_research,grant_fund_website_contactus,grant_fund_event_integrate
+	#./script/addons/install_addons.sh image_creation_BandManager
+	./.venv/bin/python3 ./odoo/odoo-bin db --backup --database image_creation_BandManager --restore_image BandManager_base
+
+.PHONY: BandManager_setup
+BandManager_setup:
+	./script/make.sh db_clean_cache
+	./script/make.sh image_db_create_BandManager_libre
+	./script/make.sh image_db_create_BandManager
+
+.PHONY: BandManager
+BandManager:
+	./script/database/db_restore.py --database BandManager --image BandManager_base
+	./script/addons/install_addons.sh BandManager band_manager_configuration
+	#./run.sh --no-http --stop-after-init -d BandManager --load-language fr_CA -l fr_CA --i18n-overwrite --i18n-import addons/addons/BandManager_configuration/i18n/fr_CA.po
+	./run.sh --no-http --stop-after-init -d BandManager --load-language fr_CA -l fr_CA
+
+.PHONY: BandManager_dev
+BandManager_dev:
+	./script/database/db_restore.py --database BandManager_dev --image BandManager_base
+	./script/addons/install_addons.sh BandManager_dev band_manager_configuration,band_manager_configuration_dev
+	#./run.sh --no-http --stop-after-init -d BandManager_dev --load-language fr_CA -l fr_CA --i18n-overwrite --i18n-import addons/addons/BandManager_configuration/i18n/fr_CA.po
+	./run.sh --no-http --stop-after-init -d BandManager_dev --load-language fr_CA -l fr_CA
+
+.PHONY: BandManager_dev_all
+BandManager_dev_all:
+	./script/make.sh BandManager_setup
+	#parallel ::: "./script/make.sh BandManager" "./script/make.sh BandManager_dev"
+	./script/make.sh BandManager
+	./script/make.sh BandManager_dev
+
+.PHONY: BandManager_dev_all_afb
+BandManager_dev_all_afb:
+	git stash; git pull --rebase; git status
+	cd odoo; git pull --rebase; git status; cd -
+	cd addons/addons; git stash; git pull --rebase; git status; cd -
+	./script/manifest/update_manifest_local_dev.sh
+	./script/make.sh BandManager_dev_all
+	make config_gen_all
+
+
+.PHONY: BandManager_dev_status
+BandManager_dev_status:
+	git fetch; git config color.ui true; git config color.status.header "blue bold"; git status
+	cd odoo; git fetch; git config color.ui true; git config color.status.header "blue bold"; git status; cd -
+	cd addons/addons; git fetch; git config color.ui true; git config color.status.header "blue bold"; git status; cd -
+
+.PHONY: BandManager_dev_status_tabs
+BandManager_dev_status_tabs:
+	xterm -e git fetch; git status
+	xterm -e cd odoo; git fetch; git status; cd -
+	xterm -e cd addons/addons; git fetch; git status; cd -
+
+.PHONY: BandManager_run
+BandManager_run:
+	./run.sh -d BandManager
+
+.PHONY: BandManager_dev_run
+BandManager_dev_run:
+	./run.sh -d BandManager_dev
+
+.PHONY: config_gen_BandManager
+config_gen_BandManager:
+	./script/git/git_repo_update_group.py --group base,BandManager
+	./script/generate_config.sh
+
+
+
 #########
 #  RUN  #
 #########
