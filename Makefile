@@ -169,7 +169,7 @@ BandManager:
 .PHONY: BandManager_dev
 BandManager_dev:
 	./script/database/db_restore.py --database BandManager_dev --image BandManager_base
-	./script/addons/install_addons.sh BandManager_dev band_manager_configuration,band_manager_configuration_dev
+	./script/addons/install_addons.sh BandManager_dev band_manager_configuration,band_manager_configuration_dev,base_module_record
 	#./run.sh --no-http --stop-after-init -d BandManager_dev --load-language fr_CA -l fr_CA --i18n-overwrite --i18n-import addons/addons/BandManager_configuration/i18n/fr_CA.po
 	./run.sh --no-http --stop-after-init -d BandManager_dev --load-language fr_CA -l fr_CA
 
